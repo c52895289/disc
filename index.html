@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#101b46">
+  <title>DISC 增員攻心術｜D型老虎攻略</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="app">
+    <header class="topbar" aria-label="網站控制列">
+      <button id="musicBtn" class="music-btn" type="button" aria-label="背景音樂開關">♫ 音樂：關</button>
+    </header>
+
+    <main class="book">
+      <!-- HOME -->
+      <section class="page active" id="homePage" aria-label="DISC增員攻心術首頁">
+        <div class="art">
+          <img src="assets/home.png" alt="DISC增員攻心術首頁">
+          <!-- D型老虎按鈕 -->
+          <button class="hotspot tiger-hotspot" data-go="tigerPage"
+                  aria-label="進入D型老虎攻略"></button>
+          <!-- 其他三型目前預留 -->
+          <button class="hotspot coming d-placeholder" data-coming="I型孔雀"></button>
+          <button class="hotspot coming s-placeholder" data-coming="S型無尾熊"></button>
+          <button class="hotspot coming c-placeholder" data-coming="C型貓頭鷹"></button>
+        </div>
+      </section>
+
+      <!-- TIGER MENU -->
+      <section class="page" id="tigerPage" aria-label="D型老虎攻略選單">
+        <div class="art">
+          <img src="assets/tiger.png" alt="D型老虎攻略選單">
+          <button class="hotspot back-home" data-go="homePage" aria-label="返回首頁"></button>
+          <button class="hotspot tiger-clues" data-go="cluesPage" aria-label="進入線索辨識"></button>
+          <button class="hotspot tiger-mines" data-go="minesPage" aria-label="進入地雷區"></button>
+          <button class="hotspot tiger-mission" data-go="missionPage" aria-label="進入任務解鎖"></button>
+        </div>
+      </section>
+
+      <!-- CLUES -->
+      <section class="page" id="cluesPage" aria-label="線索辨識">
+        <div class="art">
+          <img src="assets/clues.png" alt="D型老虎線索辨識">
+          <button class="hotspot back-tiger" data-go="tigerPage" aria-label="返回老虎攻略"></button>
+          <button class="hotspot back-home-small" data-go="homePage" aria-label="返回首頁"></button>
+        </div>
+      </section>
+
+      <!-- MINES -->
+      <section class="page" id="minesPage" aria-label="地雷區">
+        <div class="art">
+          <img src="assets/mines.png" alt="D型老虎地雷區">
+          <button class="hotspot back-tiger" data-go="tigerPage" aria-label="返回老虎攻略"></button>
+          <button class="hotspot back-home-small" data-go="homePage" aria-label="返回首頁"></button>
+        </div>
+      </section>
+
+      <!-- MISSION -->
+      <section class="page" id="missionPage" aria-label="任務解鎖">
+        <div class="art">
+          <img src="assets/mission.png" alt="任務解鎖：引導邀約卓越贏家班">
+          <button class="hotspot back-tiger" data-go="tigerPage" aria-label="返回老虎攻略"></button>
+          <button class="hotspot back-home-small" data-go="homePage" aria-label="返回首頁"></button>
+        </div>
+      </section>
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <audio id="bgm" loop preload="none">
+      <!-- 把你的 mp3 放進 audio/bgm.mp3 即可；沒有音檔也不影響網站 -->
+      <source src="audio/bgm.mp3" type="audio/mpeg">
+    </audio>
+  </div>
+
+  <script src="js/script.js"></script>
+</body>
+</html>
