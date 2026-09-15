@@ -4,6 +4,7 @@ const HOTSPOTS = document.getElementById('hotspots');
 const STAGE = document.getElementById('stage');
 const LOADING = document.getElementById('loading');
 const TITLE = document.getElementById('heroOverlay');
+const MENU_FINGERS = document.getElementById('menuFingerOverlays');
 const FINGER_ASSETS = ['assets/finger_tiger.webp?v=5','assets/finger_peacock.webp?v=5','assets/finger_koala.webp?v=5','assets/finger_owl.webp?v=5'];
 const BGM = document.getElementById('bgm');
 const MUSIC = document.getElementById('musicControl');
@@ -164,6 +165,8 @@ async function go(id, push=true){
     if(token!==navToken)return;
     TITLE.style.setProperty('--page-bg', `url("${page.img}")`);
     renderSpots(page);
+    MENU_FINGERS.classList.toggle('show', /Menu$/.test(id));
+    MENU_FINGERS.style.setProperty('--menu-bg', `url("${page.img}")`);
     prepareMusic(page.music);
     STAGE.classList.toggle('home-motion',id==='home');
     STAGE.classList.remove('page-enter');
