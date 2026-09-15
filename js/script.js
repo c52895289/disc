@@ -165,8 +165,14 @@ async function go(id, push=true){
     if(token!==navToken)return;
     TITLE.style.setProperty('--page-bg', `url("${page.img}")`);
     renderSpots(page);
-    MENU_FINGERS.classList.toggle('show', /Menu$/.test(id));
-    MENU_FINGERS.style.setProperty('--menu-bg', `url("${page.img}")`);
+    const menuMatch = id.match(/^(tiger|peacock|koala|owl)Menu$/);
+    MENU_FINGERS.classList.toggle('show', !!menuMatch);
+    if(menuMatch){
+      const animal = menuMatch[1];
+      MENU_FINGERS.style.setProperty('--finger1', `url("assets/${animal}_menu_finger1.png?v=6")`);
+      MENU_FINGERS.style.setProperty('--finger2', `url("assets/${animal}_menu_finger2.png?v=6")`);
+      MENU_FINGERS.style.setProperty('--finger3', `url("assets/${animal}_menu_finger3.png?v=6")`);
+    }
     prepareMusic(page.music);
     STAGE.classList.toggle('home-motion',id==='home');
     STAGE.classList.remove('page-enter');
