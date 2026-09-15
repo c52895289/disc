@@ -3,8 +3,8 @@ const IMG = document.getElementById('pageImage');
 const HOTSPOTS = document.getElementById('hotspots');
 const STAGE = document.getElementById('stage');
 const LOADING = document.getElementById('loading');
-const TITLE = document.getElementById('titleOverlay');
-const FINGER_ASSETS = ['assets/finger_tiger.webp','assets/finger_peacock.webp','assets/finger_koala.webp','assets/finger_owl.webp'];
+const TITLE = document.getElementById('heroOverlay');
+const FINGER_ASSETS = ['assets/finger_tiger.webp?v=5','assets/finger_peacock.webp?v=5','assets/finger_koala.webp?v=5','assets/finger_owl.webp?v=5'];
 const BGM = document.getElementById('bgm');
 const MUSIC = document.getElementById('musicControl');
 let audioReady = false;
@@ -12,7 +12,7 @@ let musicOn = false;
 
 const PAGES = {
   home:{
-    img:'assets/home.webp',
+    img:'assets/home.webp?v=5',
     alt:'DISC 增員攻心術首頁',
     music:'audio/home.mp3',
     spots:[
@@ -23,52 +23,52 @@ const PAGES = {
     ]
   },
   tigerMenu:{
-    img:'assets/tiger_menu.webp',alt:'D 型老虎攻略',music:'audio/tiger.mp3',back:'home',
+    img:'assets/tiger_menu.webp?v=5',alt:'D 型老虎攻略',music:'audio/tiger.mp3',back:'home',
     spots:[
       {label:'老虎線索辨識',x:2,y:29.0,w:96,h:22.5,to:'tigerClues'},
       {label:'老虎地雷區',x:2,y:51.8,w:96,h:21.5,to:'tigerMines'},
       {label:'老虎任務解鎖',x:2,y:74.0,w:96,h:22.0,to:'tigerMission'}
     ]
   },
-  tigerClues:{img:'assets/tiger_clues.webp',alt:'D 型老虎線索辨識',music:'audio/tiger-clues.mp3',back:'tigerMenu'},
-  tigerMines:{img:'assets/tiger_mines.webp',alt:'D 型老虎地雷區',music:'audio/tiger-mines.mp3',back:'tigerMenu'},
-  tigerMission:{img:'assets/tiger_mission.webp',alt:'D 型老虎任務解鎖',music:'audio/tiger-mission.mp3',back:'tigerMenu'},
+  tigerClues:{img:'assets/tiger_clues.webp?v=5',alt:'D 型老虎線索辨識',music:'audio/tiger-clues.mp3',back:'tigerMenu'},
+  tigerMines:{img:'assets/tiger_mines.webp?v=5',alt:'D 型老虎地雷區',music:'audio/tiger-mines.mp3',back:'tigerMenu'},
+  tigerMission:{img:'assets/tiger_mission.webp?v=5',alt:'D 型老虎任務解鎖',music:'audio/tiger-mission.mp3',back:'tigerMenu'},
 
   peacockMenu:{
-    img:'assets/peacock_menu.webp',alt:'I 型孔雀攻略',music:'audio/peacock.mp3',back:'home',
+    img:'assets/peacock_menu.webp?v=5',alt:'I 型孔雀攻略',music:'audio/peacock.mp3',back:'home',
     spots:[
       {label:'孔雀線索辨識',x:2,y:29.0,w:96,h:22.5,to:'peacockClues'},
       {label:'孔雀地雷區',x:2,y:51.8,w:96,h:21.5,to:'peacockMines'},
       {label:'孔雀任務解鎖',x:2,y:74.0,w:96,h:22.0,to:'peacockMission'}
     ]
   },
-  peacockClues:{img:'assets/peacock_clues.webp',alt:'I 型孔雀線索辨識',music:'audio/peacock-clues.mp3',back:'peacockMenu'},
-  peacockMines:{img:'assets/peacock_mines.webp',alt:'I 型孔雀地雷區',music:'audio/peacock-mines.mp3',back:'peacockMenu'},
-  peacockMission:{img:'assets/peacock_mission.webp',alt:'I 型孔雀任務解鎖',music:'audio/peacock-mission.mp3',back:'peacockMenu'},
+  peacockClues:{img:'assets/peacock_clues.webp?v=5',alt:'I 型孔雀線索辨識',music:'audio/peacock-clues.mp3',back:'peacockMenu'},
+  peacockMines:{img:'assets/peacock_mines.webp?v=5',alt:'I 型孔雀地雷區',music:'audio/peacock-mines.mp3',back:'peacockMenu'},
+  peacockMission:{img:'assets/peacock_mission.webp?v=5',alt:'I 型孔雀任務解鎖',music:'audio/peacock-mission.mp3',back:'peacockMenu'},
 
   koalaMenu:{
-    img:'assets/koala_menu.webp',alt:'S 型無尾熊攻略',music:'audio/koala.mp3',back:'home',
+    img:'assets/koala_menu.webp?v=5',alt:'S 型無尾熊攻略',music:'audio/koala.mp3',back:'home',
     spots:[
       {label:'無尾熊線索辨識',x:2,y:29.0,w:96,h:22.5,to:'koalaClues'},
       {label:'無尾熊地雷區',x:2,y:51.8,w:96,h:21.5,to:'koalaMines'},
       {label:'無尾熊任務解鎖',x:2,y:74.0,w:96,h:22.0,to:'koalaMission'}
     ]
   },
-  koalaClues:{img:'assets/koala_clues.webp',alt:'S 型無尾熊線索辨識',music:'audio/koala-clues.mp3',back:'koalaMenu'},
-  koalaMines:{img:'assets/koala_mines.webp',alt:'S 型無尾熊地雷區',music:'audio/koala-mines.mp3',back:'koalaMenu'},
-  koalaMission:{img:'assets/koala_mission.webp',alt:'S 型無尾熊任務解鎖',music:'audio/koala-mission.mp3',back:'koalaMenu'},
+  koalaClues:{img:'assets/koala_clues.webp?v=5',alt:'S 型無尾熊線索辨識',music:'audio/koala-clues.mp3',back:'koalaMenu'},
+  koalaMines:{img:'assets/koala_mines.webp?v=5',alt:'S 型無尾熊地雷區',music:'audio/koala-mines.mp3',back:'koalaMenu'},
+  koalaMission:{img:'assets/koala_mission.webp?v=5',alt:'S 型無尾熊任務解鎖',music:'audio/koala-mission.mp3',back:'koalaMenu'},
 
   owlMenu:{
-    img:'assets/owl_menu.webp',alt:'C 型貓頭鷹攻略',music:'audio/owl.mp3',back:'home',
+    img:'assets/owl_menu.webp?v=5',alt:'C 型貓頭鷹攻略',music:'audio/owl.mp3',back:'home',
     spots:[
       {label:'貓頭鷹線索辨識',x:2,y:29.0,w:96,h:22.5,to:'owlClues'},
       {label:'貓頭鷹地雷區',x:2,y:51.8,w:96,h:21.5,to:'owlMines'},
       {label:'貓頭鷹任務解鎖',x:2,y:74.0,w:96,h:22.0,to:'owlMission'}
     ]
   },
-  owlClues:{img:'assets/owl_clues.webp',alt:'C 型貓頭鷹線索辨識',music:'audio/owl-clues.mp3',back:'owlMenu'},
-  owlMines:{img:'assets/owl_mines.webp',alt:'C 型貓頭鷹地雷區',music:'audio/owl-mines.mp3',back:'owlMenu'},
-  owlMission:{img:'assets/owl_mission.webp',alt:'C 型貓頭鷹任務解鎖',music:'audio/owl-mission.mp3',back:'owlMenu'}
+  owlClues:{img:'assets/owl_clues.webp?v=5',alt:'C 型貓頭鷹線索辨識',music:'audio/owl-clues.mp3',back:'owlMenu'},
+  owlMines:{img:'assets/owl_mines.webp?v=5',alt:'C 型貓頭鷹地雷區',music:'audio/owl-mines.mp3',back:'owlMenu'},
+  owlMission:{img:'assets/owl_mission.webp?v=5',alt:'C 型貓頭鷹任務解鎖',music:'audio/owl-mission.mp3',back:'owlMenu'}
 };
 
 let current = null;

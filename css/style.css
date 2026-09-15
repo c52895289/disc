@@ -18,8 +18,8 @@ body{
    桌機/平板優先滿高；手機優先完整顯示整張頁面，絕不裁切左右內容。 */
 .stage{
   position:relative;
-  width:min(100vw, 66.6666667dvh);
-  height:auto;
+  width:min(100vw, calc(100dvh * 2 / 3));
+  height:min(100dvh, calc(100vw * 3 / 2));
   max-width:100vw;
   max-height:100dvh;
   aspect-ratio:2/3;
@@ -67,28 +67,29 @@ body{
 .loading span{width:32px;height:32px;border:3px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* 首頁大標題縮放／呼吸動畫 */
-.title-overlay{
+/* 首頁最上方「DISC 增員攻心術＋攻略隨手翻」整個區塊同步縮放 */
+.hero-overlay{
   position:absolute;
   left:0;right:0;top:0;
-  height:31%;
+  height:37%;
   z-index:6;
   pointer-events:none;
   background-image:var(--page-bg);
-  background-size:100% 322.58%;
+  background-size:100% 270.27%;
   background-position:0 0;
   background-repeat:no-repeat;
   transform-origin:50% 45%;
   opacity:0;
-  clip-path:inset(1% 4% 0 4% round 8px);
+  clip-path:inset(0 2.5% 0 2.5%);
+  will-change:transform,filter;
 }
-.stage.home-motion .title-overlay{
+.stage.home-motion .hero-overlay{
   opacity:1;
-  animation:titleZoom 2.8s ease-in-out infinite;
+  animation:heroZoom 2.8s ease-in-out infinite;
 }
-@keyframes titleZoom{
+@keyframes heroZoom{
   0%,100%{transform:scale(.985);filter:brightness(1)}
-  50%{transform:scale(1.035);filter:brightness(1.05)}
+  50%{transform:scale(1.035);filter:brightness(1.045)}
 }
 
 /* 首頁四個「手指」縮放提示。使用原首頁手指裁切素材，避免把整張卡片一起放大。 */
@@ -103,10 +104,10 @@ body{
   will-change:transform,filter;
   filter:drop-shadow(0 2px 2px rgba(0,0,0,.22));
 }
-.finger.tiger{left:37.50%;top:64.45%;width:7.52%;height:5.40%;background-image:url('../assets/finger_tiger.webp');animation-delay:0s}
-.finger.peacock{left:83.79%;top:64.52%;width:7.62%;height:5.40%;background-image:url('../assets/finger_peacock.webp');animation-delay:.12s}
-.finger.koala{left:36.91%;top:87.11%;width:8.30%;height:7.10%;background-image:url('../assets/finger_koala.webp');animation-delay:.24s}
-.finger.owl{left:83.79%;top:87.37%;width:7.62%;height:6.84%;background-image:url('../assets/finger_owl.webp');animation-delay:.36s}
+.finger.tiger{left:37.50%;top:64.45%;width:7.52%;height:5.40%;background-image:url('../assets/finger_tiger.webp?v=5')}
+.finger.peacock{left:83.79%;top:64.52%;width:7.62%;height:5.40%;background-image:url('../assets/finger_peacock.webp?v=5')}
+.finger.koala{left:36.91%;top:87.11%;width:8.30%;height:7.10%;background-image:url('../assets/finger_koala.webp?v=5')}
+.finger.owl{left:83.79%;top:87.37%;width:7.62%;height:6.84%;background-image:url('../assets/finger_owl.webp?v=5')}
 @keyframes fingerPulse{
   0%,100%{transform:scale(.92) translateY(0);filter:drop-shadow(0 2px 2px rgba(0,0,0,.20))}
   50%{transform:scale(1.13) translateY(-1.5%);filter:drop-shadow(0 3px 4px rgba(0,0,0,.30))}
@@ -130,9 +131,9 @@ body{
   .hotspot{border-radius:10px}
 }
 @media (max-height:620px){
-  .stage{width:min(100vw,66.6666667dvh);max-width:100vw;max-height:100dvh}
+  .stage{width:min(100vw,calc(100dvh * 2 / 3));height:min(100dvh,calc(100vw * 3 / 2));max-width:100vw;max-height:100dvh}
 }
 @media (prefers-reduced-motion:reduce){
-  .stage.home-motion .title-overlay,.finger,.page-enter{animation:none!important}
+  .stage.home-motion .hero-overlay,.finger,.page-enter{animation:none!important}
   .hotspot{transition:none}
 }
