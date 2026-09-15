@@ -1,0 +1,166 @@
+
+*{box-sizing:border-box}
+html,body{width:100%;height:100%;margin:0}
+body{
+  overflow:hidden;
+  background:#0b0b12;
+  font-family:system-ui,-apple-system,"Noto Sans TC","Microsoft JhengHei",sans-serif;
+  -webkit-tap-highlight-color:transparent;
+  overscroll-behavior:none;
+}
+#app{
+  width:100%;
+  height:100dvh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+.stage{
+  position:relative;
+  height:100dvh;
+  width:66.6666667dvh;
+  max-width:none;
+  aspect-ratio:2/3;
+  flex:0 0 auto;
+  overflow:hidden;
+  isolation:isolate;
+  background:#fff;
+  box-shadow:0 0 40px rgba(0,0,0,.28);
+}
+.page-image{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit:fill;
+  user-select:none;
+  -webkit-user-drag:none;
+  opacity:1;
+}
+.hotspots{
+  position:absolute;
+  inset:0;
+  z-index:5;
+}
+.hotspot{
+  position:absolute;
+  display:block;
+  padding:0;
+  margin:0;
+  border:0;
+  background:transparent;
+  cursor:pointer;
+  border-radius:14px;
+  outline:none;
+  touch-action:manipulation;
+  transition:transform .12s ease,filter .12s ease,background .12s ease;
+}
+.hotspot:hover{
+  background:rgba(255,255,255,.035);
+  filter:brightness(1.04);
+}
+.hotspot:active{
+  transform:scale(.965);
+  background:rgba(255,255,255,.08);
+}
+.hotspot:focus-visible{
+  box-shadow:0 0 0 3px rgba(255,255,255,.95),0 0 0 6px rgba(53,110,255,.8);
+}
+.hotspot.back{
+  z-index:10;
+}
+.loading{
+  position:absolute;
+  inset:0;
+  z-index:20;
+  display:grid;
+  place-items:center;
+  pointer-events:none;
+  background:rgba(8,8,14,.08);
+  opacity:0;
+  transition:opacity .18s ease;
+}
+.loading.show{opacity:1}
+.loading span{
+  width:32px;height:32px;
+  border:3px solid rgba(255,255,255,.4);
+  border-top-color:#fff;
+  border-radius:50%;
+  animation:spin .7s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* 首頁標題區的微動態：不改圖片，只讓整個首頁產生輕微呼吸感 */
+.stage.home-motion::after{
+  content:"";
+  position:absolute;
+  left:10%;
+  right:10%;
+  top:2%;
+  height:29%;
+  z-index:2;
+  pointer-events:none;
+  border-radius:30%;
+  animation:titleGlow 2.8s ease-in-out infinite;
+}
+@keyframes titleGlow{
+  0%,100%{transform:scale(.985);opacity:.0}
+  50%{transform:scale(1.015);opacity:.08}
+}
+
+/* 頁面切換 */
+.page-enter{animation:pageIn .32s cubic-bezier(.2,.75,.25,1)}
+@keyframes pageIn{
+  from{opacity:.25;transform:scale(.985)}
+  to{opacity:1;transform:scale(1)}
+}
+
+@media (max-height:620px){
+  .stage{height:100dvh;width:66.6666667dvh}
+}
+@media (prefers-reduced-motion:reduce){
+  .stage.home-motion::after,.page-enter{animation:none!important}
+  .hotspot{transition:none}
+}
+
+.title-overlay{
+  position:absolute;
+  left:0;right:0;top:0;
+  height:31%;
+  z-index:3;
+  pointer-events:none;
+  background-image:var(--page-bg);
+  background-size:100% 322.58%;
+  background-position:0 0;
+  background-repeat:no-repeat;
+  transform-origin:50% 45%;
+  opacity:0;
+}
+.stage.home-motion .title-overlay{
+  opacity:1;
+  animation:titleZoom 3.2s ease-in-out infinite;
+}
+@keyframes titleZoom{
+  0%,100%{transform:scale(.985)}
+  50%{transform:scale(1.035)}
+}
+.music-control{
+  position:absolute;
+  z-index:30;
+  right:2.2%;
+  top:1.4%;
+  width:7.5%;
+  aspect-ratio:1;
+  border:2px solid #111;
+  border-radius:50%;
+  background:rgba(255,255,255,.9);
+  color:#111;
+  font-size:clamp(12px,2.1vw,22px);
+  cursor:pointer;
+  box-shadow:0 2px 0 #111;
+  touch-action:manipulation;
+}
+.music-control:active{transform:scale(.9)}
+.music-control.off{opacity:.58}
