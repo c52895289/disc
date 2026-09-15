@@ -4,6 +4,7 @@ const HOTSPOTS = document.getElementById('hotspots');
 const STAGE = document.getElementById('stage');
 const LOADING = document.getElementById('loading');
 const TITLE = document.getElementById('titleOverlay');
+const FINGER_ASSETS = ['assets/finger_tiger.webp','assets/finger_peacock.webp','assets/finger_koala.webp','assets/finger_owl.webp'];
 const BGM = document.getElementById('bgm');
 const MUSIC = document.getElementById('musicControl');
 let audioReady = false;
@@ -189,4 +190,6 @@ document.addEventListener('keydown',e=>{
 });
 
 const first=location.hash.slice(1);
+// 非阻塞預載四個首頁手指素材；不影響首頁顯示。
+FINGER_ASSETS.forEach(src=>{ const im=new Image(); im.decoding='async'; im.src=src; });
 go(PAGES[first]?first:'home',false);

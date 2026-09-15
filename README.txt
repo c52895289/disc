@@ -1,18 +1,17 @@
-DISC 增員攻心術｜四大 DISC 互動電子書
+DISC 增員攻心術｜GitHub Pages 互動網站 v4
 
-使用方式：
-1. 將整個資料夾內容上傳到 GitHub repository 的 main 分支根目錄。
-2. GitHub Pages 設定：Deploy from a branch → main → /(root)。
-3. index.html 必須位於 repository 根目錄。
-4. 目前圖片已轉為 WebP，首頁只載入首頁圖片；其他頁面點擊後才載入。
-5. audio 資料夾已預留。未來可放入：
-   home.mp3
-   tiger.mp3 / tiger-clues.mp3 / tiger-mines.mp3 / tiger-mission.mp3
-   peacock.mp3 / peacock-clues.mp3 / peacock-mines.mp3 / peacock-mission.mp3
-   koala.mp3 / koala-clues.mp3 / koala-mines.mp3 / koala-mission.mp3
-   owl.mp3 / owl-clues.mp3 / owl-mines.mp3 / owl-mission.mp3
+本版重點：
+1. 首頁大標題「DISC 增員攻心術」加入持續、柔和的縮放／呼吸動畫。
+2. 首頁四個「查看專屬攻略」手指加入錯落的縮放提示動畫。
+3. 手機／窄螢幕改為「完整顯示 2:3 頁面、水平與垂直置中」，不再用滿版高度裁切左右內容。
+4. 桌機與平板維持滿高比例顯示；窄螢幕優先完整看見整張頁面。
+5. 17 張主頁面圖片仍採 WebP；非首頁圖片於切換時載入，維持快速初始載入。
+6. 背景音樂架構保留；目前未附 MP3。日後可依 audio/README.txt 的檔名加入。
 
-注意：
-- 目前網站不會因為缺少 MP3 而報錯。
-- 所有畫面維持原始 1024×1536 圖片比例。
-- 手機／平板採滿高置中方式，避免上下出現不自然的色塊；窄螢幕可能會從左右少量裁切，保持畫面正中央。
+GitHub 上傳：
+- 將本資料夾內所有內容放到 repository 的 main 分支根目錄。
+- index.html 必須在根目錄。
+- GitHub Pages：Deploy from a branch → main → /(root)。
+- 不需要 Node.js。
+
+注意：手機為了完整看到整張 2:3 頁面，畫面上下可能會保留少量背景空間；這是避免左右內容被裁切的必要結果。

@@ -1,4 +1,3 @@
-
 *{box-sizing:border-box}
 html,body{width:100%;height:100%;margin:0}
 body{
@@ -9,18 +8,20 @@ body{
   overscroll-behavior:none;
 }
 #app{
-  width:100%;
+  width:100vw;
   height:100dvh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  display:grid;
+  place-items:center;
   overflow:hidden;
 }
+/* 以 1024×1536（2:3）原圖比例呈現。
+   桌機/平板優先滿高；手機優先完整顯示整張頁面，絕不裁切左右內容。 */
 .stage{
   position:relative;
-  height:100dvh;
-  width:66.6666667dvh;
-  max-width:none;
+  width:min(100vw, 66.6666667dvh);
+  height:auto;
+  max-width:100vw;
+  max-height:100dvh;
   aspect-ratio:2/3;
   flex:0 0 auto;
   overflow:hidden;
@@ -39,11 +40,7 @@ body{
   -webkit-user-drag:none;
   opacity:1;
 }
-.hotspots{
-  position:absolute;
-  inset:0;
-  z-index:5;
-}
+.hotspots{position:absolute;inset:0;z-index:5}
 .hotspot{
   position:absolute;
   display:block;
@@ -57,79 +54,25 @@ body{
   touch-action:manipulation;
   transition:transform .12s ease,filter .12s ease,background .12s ease;
 }
-.hotspot:hover{
-  background:rgba(255,255,255,.035);
-  filter:brightness(1.04);
-}
-.hotspot:active{
-  transform:scale(.965);
-  background:rgba(255,255,255,.08);
-}
-.hotspot:focus-visible{
-  box-shadow:0 0 0 3px rgba(255,255,255,.95),0 0 0 6px rgba(53,110,255,.8);
-}
-.hotspot.back{
-  z-index:10;
-}
+.hotspot:hover{background:rgba(255,255,255,.035);filter:brightness(1.04)}
+.hotspot:active{transform:scale(.965);background:rgba(255,255,255,.08)}
+.hotspot:focus-visible{box-shadow:0 0 0 3px rgba(255,255,255,.95),0 0 0 6px rgba(53,110,255,.8)}
+.hotspot.back{z-index:10}
 .loading{
-  position:absolute;
-  inset:0;
-  z-index:20;
-  display:grid;
-  place-items:center;
-  pointer-events:none;
-  background:rgba(8,8,14,.08);
-  opacity:0;
-  transition:opacity .18s ease;
+  position:absolute;inset:0;z-index:20;
+  display:grid;place-items:center;pointer-events:none;
+  background:rgba(8,8,14,.08);opacity:0;transition:opacity .18s ease;
 }
 .loading.show{opacity:1}
-.loading span{
-  width:32px;height:32px;
-  border:3px solid rgba(255,255,255,.4);
-  border-top-color:#fff;
-  border-radius:50%;
-  animation:spin .7s linear infinite;
-}
+.loading span{width:32px;height:32px;border:3px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* 首頁標題區的微動態：不改圖片，只讓整個首頁產生輕微呼吸感 */
-.stage.home-motion::after{
-  content:"";
-  position:absolute;
-  left:10%;
-  right:10%;
-  top:2%;
-  height:29%;
-  z-index:2;
-  pointer-events:none;
-  border-radius:30%;
-  animation:titleGlow 2.8s ease-in-out infinite;
-}
-@keyframes titleGlow{
-  0%,100%{transform:scale(.985);opacity:.0}
-  50%{transform:scale(1.015);opacity:.08}
-}
-
-/* 頁面切換 */
-.page-enter{animation:pageIn .32s cubic-bezier(.2,.75,.25,1)}
-@keyframes pageIn{
-  from{opacity:.25;transform:scale(.985)}
-  to{opacity:1;transform:scale(1)}
-}
-
-@media (max-height:620px){
-  .stage{height:100dvh;width:66.6666667dvh}
-}
-@media (prefers-reduced-motion:reduce){
-  .stage.home-motion::after,.page-enter{animation:none!important}
-  .hotspot{transition:none}
-}
-
+/* 首頁大標題縮放／呼吸動畫 */
 .title-overlay{
   position:absolute;
   left:0;right:0;top:0;
   height:31%;
-  z-index:3;
+  z-index:6;
   pointer-events:none;
   background-image:var(--page-bg);
   background-size:100% 322.58%;
@@ -137,30 +80,59 @@ body{
   background-repeat:no-repeat;
   transform-origin:50% 45%;
   opacity:0;
+  clip-path:inset(1% 4% 0 4% round 8px);
 }
 .stage.home-motion .title-overlay{
   opacity:1;
-  animation:titleZoom 3.2s ease-in-out infinite;
+  animation:titleZoom 2.8s ease-in-out infinite;
 }
 @keyframes titleZoom{
-  0%,100%{transform:scale(.985)}
-  50%{transform:scale(1.035)}
+  0%,100%{transform:scale(.985);filter:brightness(1)}
+  50%{transform:scale(1.035);filter:brightness(1.05)}
 }
-.music-control{
+
+/* 首頁四個「手指」縮放提示。使用原首頁手指裁切素材，避免把整張卡片一起放大。 */
+.finger-overlays{position:absolute;inset:0;z-index:7;pointer-events:none;display:none}
+.stage.home-motion .finger-overlays{display:block}
+.finger{
   position:absolute;
-  z-index:30;
-  right:2.2%;
-  top:1.4%;
-  width:7.5%;
-  aspect-ratio:1;
-  border:2px solid #111;
-  border-radius:50%;
-  background:rgba(255,255,255,.9);
-  color:#111;
-  font-size:clamp(12px,2.1vw,22px);
-  cursor:pointer;
-  box-shadow:0 2px 0 #111;
-  touch-action:manipulation;
+  background-repeat:no-repeat;
+  background-size:100% 100%;
+  transform-origin:center center;
+  animation:fingerPulse 1.55s ease-in-out infinite;
+  will-change:transform,filter;
+  filter:drop-shadow(0 2px 2px rgba(0,0,0,.22));
+}
+.finger.tiger{left:37.50%;top:64.45%;width:7.52%;height:5.40%;background-image:url('../assets/finger_tiger.webp');animation-delay:0s}
+.finger.peacock{left:83.79%;top:64.52%;width:7.62%;height:5.40%;background-image:url('../assets/finger_peacock.webp');animation-delay:.12s}
+.finger.koala{left:36.91%;top:87.11%;width:8.30%;height:7.10%;background-image:url('../assets/finger_koala.webp');animation-delay:.24s}
+.finger.owl{left:83.79%;top:87.37%;width:7.62%;height:6.84%;background-image:url('../assets/finger_owl.webp');animation-delay:.36s}
+@keyframes fingerPulse{
+  0%,100%{transform:scale(.92) translateY(0);filter:drop-shadow(0 2px 2px rgba(0,0,0,.20))}
+  50%{transform:scale(1.13) translateY(-1.5%);filter:drop-shadow(0 3px 4px rgba(0,0,0,.30))}
+}
+
+/* 頁面切換 */
+.page-enter{animation:pageIn .32s cubic-bezier(.2,.75,.25,1)}
+@keyframes pageIn{from{opacity:.25;transform:scale(.985)}to{opacity:1;transform:scale(1)}}
+
+.music-control{
+  position:absolute;z-index:30;right:2.2%;top:1.4%;width:7.5%;aspect-ratio:1;
+  border:2px solid #111;border-radius:50%;background:rgba(255,255,255,.9);color:#111;
+  font-size:clamp(12px,2.1vw,22px);cursor:pointer;box-shadow:0 2px 0 #111;touch-action:manipulation;
 }
 .music-control:active{transform:scale(.9)}
 .music-control.off{opacity:.58}
+
+@media (max-width:480px){
+  #app{padding:0}
+  .stage{width:100vw;max-width:100vw;max-height:100dvh}
+  .hotspot{border-radius:10px}
+}
+@media (max-height:620px){
+  .stage{width:min(100vw,66.6666667dvh);max-width:100vw;max-height:100dvh}
+}
+@media (prefers-reduced-motion:reduce){
+  .stage.home-motion .title-overlay,.finger,.page-enter{animation:none!important}
+  .hotspot{transition:none}
+}
