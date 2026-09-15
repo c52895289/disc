@@ -1,59 +1,192 @@
-const pages = [...document.querySelectorAll(".page")];
-const toast = document.getElementById("toast");
-const bgm = document.getElementById("bgm");
-const musicBtn = document.getElementById("musicBtn");
 
-function showPage(id, push=true){
-  const target = document.getElementById(id);
-  if(!target) return;
-  pages.forEach(p => p.classList.toggle("active", p === target));
-  window.scrollTo({top:0, behavior:"smooth"});
-  if(push) history.pushState({page:id}, "", "#" + id);
+const IMG = document.getElementById('pageImage');
+const HOTSPOTS = document.getElementById('hotspots');
+const STAGE = document.getElementById('stage');
+const LOADING = document.getElementById('loading');
+const TITLE = document.getElementById('titleOverlay');
+const BGM = document.getElementById('bgm');
+const MUSIC = document.getElementById('musicControl');
+let audioReady = false;
+let musicOn = false;
+
+const PAGES = {
+  home:{
+    img:'assets/home.webp',
+    alt:'DISC 增員攻心術首頁',
+    music:'audio/home.mp3',
+    spots:[
+      {label:'進入 D 型老虎攻略',x:2.5,y:46.8,w:47.5,h:22.0,to:'tigerMenu'},
+      {label:'進入 I 型孔雀攻略',x:50.0,y:46.8,w:47.5,h:22.0,to:'peacockMenu'},
+      {label:'進入 S 型無尾熊攻略',x:2.5,y:70.2,w:47.5,h:22.0,to:'koalaMenu'},
+      {label:'進入 C 型貓頭鷹攻略',x:50.0,y:70.2,w:47.5,h:22.0,to:'owlMenu'}
+    ]
+  },
+  tigerMenu:{
+    img:'assets/tiger_menu.webp',alt:'D 型老虎攻略',music:'audio/tiger.mp3',back:'home',
+    spots:[
+      {label:'老虎線索辨識',x:2,y:29.0,w:96,h:22.5,to:'tigerClues'},
+      {label:'老虎地雷區',x:2,y:51.8,w:96,h:21.5,to:'tigerMines'},
+      {label:'老虎任務解鎖',x:2,y:74.0,w:96,h:22.0,to:'tigerMission'}
+    ]
+  },
+  tigerClues:{img:'assets/tiger_clues.webp',alt:'D 型老虎線索辨識',music:'audio/tiger-clues.mp3',back:'tigerMenu'},
+  tigerMines:{img:'assets/tiger_mines.webp',alt:'D 型老虎地雷區',music:'audio/tiger-mines.mp3',back:'tigerMenu'},
+  tigerMission:{img:'assets/tiger_mission.webp',alt:'D 型老虎任務解鎖',music:'audio/tiger-mission.mp3',back:'tigerMenu'},
+
+  peacockMenu:{
+    img:'assets/peacock_menu.webp',alt:'I 型孔雀攻略',music:'audio/peacock.mp3',back:'home',
+    spots:[
+      {label:'孔雀線索辨識',x:2,y:29.0,w:96,h:22.5,to:'peacockClues'},
+      {label:'孔雀地雷區',x:2,y:51.8,w:96,h:21.5,to:'peacockMines'},
+      {label:'孔雀任務解鎖',x:2,y:74.0,w:96,h:22.0,to:'peacockMission'}
+    ]
+  },
+  peacockClues:{img:'assets/peacock_clues.webp',alt:'I 型孔雀線索辨識',music:'audio/peacock-clues.mp3',back:'peacockMenu'},
+  peacockMines:{img:'assets/peacock_mines.webp',alt:'I 型孔雀地雷區',music:'audio/peacock-mines.mp3',back:'peacockMenu'},
+  peacockMission:{img:'assets/peacock_mission.webp',alt:'I 型孔雀任務解鎖',music:'audio/peacock-mission.mp3',back:'peacockMenu'},
+
+  koalaMenu:{
+    img:'assets/koala_menu.webp',alt:'S 型無尾熊攻略',music:'audio/koala.mp3',back:'home',
+    spots:[
+      {label:'無尾熊線索辨識',x:2,y:29.0,w:96,h:22.5,to:'koalaClues'},
+      {label:'無尾熊地雷區',x:2,y:51.8,w:96,h:21.5,to:'koalaMines'},
+      {label:'無尾熊任務解鎖',x:2,y:74.0,w:96,h:22.0,to:'koalaMission'}
+    ]
+  },
+  koalaClues:{img:'assets/koala_clues.webp',alt:'S 型無尾熊線索辨識',music:'audio/koala-clues.mp3',back:'koalaMenu'},
+  koalaMines:{img:'assets/koala_mines.webp',alt:'S 型無尾熊地雷區',music:'audio/koala-mines.mp3',back:'koalaMenu'},
+  koalaMission:{img:'assets/koala_mission.webp',alt:'S 型無尾熊任務解鎖',music:'audio/koala-mission.mp3',back:'koalaMenu'},
+
+  owlMenu:{
+    img:'assets/owl_menu.webp',alt:'C 型貓頭鷹攻略',music:'audio/owl.mp3',back:'home',
+    spots:[
+      {label:'貓頭鷹線索辨識',x:2,y:29.0,w:96,h:22.5,to:'owlClues'},
+      {label:'貓頭鷹地雷區',x:2,y:51.8,w:96,h:21.5,to:'owlMines'},
+      {label:'貓頭鷹任務解鎖',x:2,y:74.0,w:96,h:22.0,to:'owlMission'}
+    ]
+  },
+  owlClues:{img:'assets/owl_clues.webp',alt:'C 型貓頭鷹線索辨識',music:'audio/owl-clues.mp3',back:'owlMenu'},
+  owlMines:{img:'assets/owl_mines.webp',alt:'C 型貓頭鷹地雷區',music:'audio/owl-mines.mp3',back:'owlMenu'},
+  owlMission:{img:'assets/owl_mission.webp',alt:'C 型貓頭鷹任務解鎖',music:'audio/owl-mission.mp3',back:'owlMenu'}
+};
+
+let current = null;
+let navToken = 0;
+
+function pct(v){return `${v}%`;}
+
+function addSpot(spot, isBack=false){
+  const b=document.createElement('button');
+  b.type='button';
+  b.className='hotspot'+(isBack?' back':'');
+  b.setAttribute('aria-label',spot.label);
+  b.style.left=pct(spot.x);
+  b.style.top=pct(spot.y);
+  b.style.width=pct(spot.w);
+  b.style.height=pct(spot.h);
+  b.addEventListener('click',()=>go(spot.to));
+  HOTSPOTS.appendChild(b);
 }
 
-function notify(message){
-  toast.textContent = message;
-  toast.classList.add("show");
-  clearTimeout(notify.timer);
-  notify.timer = setTimeout(()=>toast.classList.remove("show"), 1700);
-}
-
-document.addEventListener("click", (e)=>{
-  const btn = e.target.closest("[data-go]");
-  if(btn){
-    e.preventDefault();
-    showPage(btn.dataset.go);
-    return;
+function renderSpots(page){
+  HOTSPOTS.innerHTML='';
+  if(page.back){
+    addSpot({label:'返回上一層',x:1.5,y:.8,w:20,h:6.8,to:page.back},true);
   }
-  const coming = e.target.closest("[data-coming]");
-  if(coming){
-    e.preventDefault();
-    notify(`${coming.dataset.coming} 攻略頁製作中`);
-  }
-});
-
-function loadHash(){
-  const id = location.hash.replace("#","");
-  if(document.getElementById(id)) showPage(id,false);
-  else showPage("homePage",false);
+  (page.spots||[]).forEach(s=>addSpot(s));
 }
-window.addEventListener("popstate", ()=>loadHash());
-window.addEventListener("hashchange", ()=>loadHash());
 
-musicBtn.addEventListener("click", async ()=>{
+function setLoading(show){
+  LOADING.classList.toggle('show',show);
+}
+
+function loadImage(src, token){
+  return new Promise((resolve,reject)=>{
+    const im=new Image();
+    im.decoding='async';
+    im.onload=()=>{ if(token===navToken) resolve(); else reject(new Error('stale')); };
+    im.onerror=reject;
+    im.src=src;
+  });
+}
+
+
+async function prepareMusic(src){
+  audioReady=false;
+  MUSIC.hidden=true;
+  BGM.pause();
+  BGM.removeAttribute('src');
+  BGM.load();
+  if(!src) return;
+  // 不預載：只有頁面切換/使用者互動後才真正請求 MP3。
   try{
-    if(bgm.paused){
-      await bgm.play();
-      musicBtn.textContent = "♫ 音樂：開";
-      notify("背景音樂已開啟");
-    }else{
-      bgm.pause();
-      musicBtn.textContent = "♫ 音樂：關";
-      notify("背景音樂已關閉");
-    }
-  }catch(err){
-    notify("請先把 MP3 放入 audio/bgm.mp3");
+    const r=await fetch(src,{method:'HEAD',cache:'no-store'});
+    if(!r.ok) return;
+    BGM.src=src;
+    BGM.load();
+    BGM.addEventListener('canplay',()=>{
+      audioReady=true;
+      MUSIC.hidden=false;
+    },{once:true});
+  }catch(e){ /* 沒有 MP3 時保持安靜 */ }
+}
+async function startMusicIfPossible(){
+  if(!audioReady) return;
+  try{
+    await BGM.play();
+    musicOn=true;
+    MUSIC.classList.remove('off');
+  }catch(e){}
+}
+MUSIC.addEventListener('click',async()=>{
+  if(!audioReady)return;
+  if(BGM.paused){
+    await startMusicIfPossible();
+  }else{
+    BGM.pause();
+    musicOn=false;
+    MUSIC.classList.add('off');
   }
 });
+document.addEventListener('pointerdown',()=>{ startMusicIfPossible(); },{once:false,passive:true});
 
-loadHash();
+async function go(id, push=true){
+  if(!PAGES[id] || id===current) return;
+  const token=++navToken;
+  const page=PAGES[id];
+  setLoading(true);
+  try{
+    // 先切換實際圖片來源，再等待預載完成；避免預載失敗時整頁只剩背景色。
+    IMG.src=page.img;
+    IMG.alt=page.alt;
+    await loadImage(page.img,token);
+    if(token!==navToken)return;
+    TITLE.style.setProperty('--page-bg', `url("${page.img}")`);
+    renderSpots(page);
+    prepareMusic(page.music);
+    STAGE.classList.toggle('home-motion',id==='home');
+    STAGE.classList.remove('page-enter');
+    void STAGE.offsetWidth;
+    STAGE.classList.add('page-enter');
+    current=id;
+    if(push) history.pushState({page:id},'',`#${id}`);
+    setLoading(false);
+    // 預留未來背景音樂：目前沒有 mp3 也完全不影響網站。
+    // 音樂會在未來使用者互動後再啟用，避免阻塞初始載入。
+  }catch(e){
+    if(token===navToken) setLoading(false);
+    console.error(e);
+  }
+}
+
+window.addEventListener('popstate',()=>{
+  const id=location.hash.slice(1)||'home';
+  go(PAGES[id]?id:'home',false);
+});
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape' && current && PAGES[current]?.back) go(PAGES[current].back);
+});
+
+const first=location.hash.slice(1);
+go(PAGES[first]?first:'home',false);
