@@ -188,7 +188,7 @@ async function go(id, push=true){
       const animal = menuMatch[1];
       const fingers = MENU_FINGERS.querySelectorAll('.menu-finger');
       fingers.forEach((el, i) => {
-        el.src = `assets/${animal}_menu_finger${i+1}.png?v=9`;
+        el.src = `assets/menu_hand_clean_${i+1}.png?v=10`;
       });
       // 強制重新啟動同一時間點的動畫，讓每次進入攻略頁都三個一起縮放。
       MENU_FINGERS.classList.remove('show');

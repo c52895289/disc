@@ -113,18 +113,28 @@ body{
   50%{transform:scale(1.13) translateY(-1.5%);filter:drop-shadow(0 3px 4px rgba(0,0,0,.30))}
 }
 
-/* 動物攻略選單頁：每一頁的 3 個「箭頭＋手指」都直接使用透明 PNG，
-   三個元素完全同時、同相位縮放，不依賴背景裁切或 CSS 背景定位。 */
-.menu-finger-overlays{position:absolute;inset:0;z-index:8;pointer-events:none;display:none;overflow:visible}
+/* 動物攻略選單頁：只顯示「手指」本體。
+   手指使用從原始 1024×1536 頁面乾淨切出的透明 PNG，
+   三個手指共用同一動畫時間軸，因此會完全同步縮放。
+   不包含右箭頭、按鈕或底下背景圖片。 */
+.menu-finger-overlays{
+  position:absolute;
+  inset:0;
+  z-index:8;
+  pointer-events:none;
+  display:none;
+  overflow:visible;
+}
 .menu-finger-overlays.show{display:block}
 .menu-finger{
   position:absolute;
-  left:84.47%;
-  width:10.25%;
+  left:88.87%;
+  width:4.30%;
   height:auto;
   display:block;
   margin:0;
   padding:0;
+  border:0;
   object-fit:contain;
   object-position:center;
   transform-origin:50% 65%;
@@ -134,13 +144,19 @@ body{
   user-select:none;
   -webkit-user-drag:none;
 }
-/* 三個位置對應原始 1024×1536 頁面的三個右側箭頭＋手指。 */
-.menu-finger.zone1{top:42.32%}
-.menu-finger.zone2{top:60.22%}
-.menu-finger.zone3{top:80.08%}
+.menu-finger.zone1{top:46.42%}
+.menu-finger.zone2{top:68.55%}
+.menu-finger.zone3{top:89.84%}
+
 @keyframes menuFingerPulse{
-  0%,100%{transform:scale(.92);filter:drop-shadow(0 1px 1px rgba(0,0,0,.12))}
-  50%{transform:scale(1.10);filter:drop-shadow(0 3px 4px rgba(0,0,0,.25))}
+  0%,100%{
+    transform:scale(.92);
+    filter:drop-shadow(0 1px 1px rgba(0,0,0,.12));
+  }
+  50%{
+    transform:scale(1.10);
+    filter:drop-shadow(0 3px 4px rgba(0,0,0,.25));
+  }
 }
 
 /* 頁面切換 */
