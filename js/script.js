@@ -113,44 +113,61 @@ function loadImage(src, token){
 }
 
 
-async function prepareMusic(src){
-  audioReady=false;
-  MUSIC.hidden=true;
-  BGM.pause();
-  BGM.removeAttribute('src');
-  BGM.load();
-  if(!src) return;
-  // 不預載：只有頁面切換/使用者互動後才真正請求 MP3。
-  try{
-    const r=await fetch(src,{method:'HEAD',cache:'no-store'});
-    if(!r.ok) return;
-    BGM.src=src;
-    BGM.load();
+const MUSIC_SRC = 'audio/bgm.mp3?v=1';
+
+async function ensureMusic(autoplay=true){
+  if(audioReady){
+    if(autoplay) {
+      try{ await BGM.play(); musicOn=true; MUSIC.classList.remove('off'); }catch(e){}
+    }
+    return;
+  }
+
+  if(!BGM.src){
+    BGM.volume = 0.45;
+    BGM.preload = 'none';
+    BGM.src = MUSIC_SRC;
     BGM.addEventListener('canplay',()=>{
       audioReady=true;
       MUSIC.hidden=false;
+      if(autoplay){
+        BGM.play().then(()=>{
+          musicOn=true;
+          MUSIC.classList.remove('off');
+        }).catch(()=>{});
+      }
     },{once:true});
-  }catch(e){ /* 沒有 MP3 時保持安靜 */ }
+    BGM.load();
+  }
+
+  if(autoplay){
+    try{
+      await BGM.play();
+      audioReady=true;
+      musicOn=true;
+      MUSIC.hidden=false;
+      MUSIC.classList.remove('off');
+    }catch(e){ /* 瀏覽器會在 canplay / 下一次互動時再嘗試 */ }
+  }
 }
-async function startMusicIfPossible(){
-  if(!audioReady) return;
-  try{
-    await BGM.play();
-    musicOn=true;
-    MUSIC.classList.remove('off');
-  }catch(e){}
-}
-MUSIC.addEventListener('click',async()=>{
-  if(!audioReady)return;
+
+MUSIC.addEventListener('click',async(e)=>{
+  e.stopPropagation();
+  if(!audioReady){
+    await ensureMusic(true);
+    return;
+  }
   if(BGM.paused){
-    await startMusicIfPossible();
+    await ensureMusic(true);
   }else{
     BGM.pause();
     musicOn=false;
     MUSIC.classList.add('off');
   }
 });
-document.addEventListener('pointerdown',()=>{ startMusicIfPossible(); },{once:false,passive:true});
+
+// 背景音樂不參與首頁初始載入；第一次使用者點擊/觸控時才開始抓取 MP3。
+document.addEventListener('pointerdown',()=>{ ensureMusic(true); },{once:true,passive:true});
 
 async function go(id, push=true){
   if(!PAGES[id] || id===current) return;
@@ -169,11 +186,15 @@ async function go(id, push=true){
     MENU_FINGERS.classList.toggle('show', !!menuMatch);
     if(menuMatch){
       const animal = menuMatch[1];
-      MENU_FINGERS.style.setProperty('--finger1', `url("assets/${animal}_menu_finger1.png?v=6")`);
-      MENU_FINGERS.style.setProperty('--finger2', `url("assets/${animal}_menu_finger2.png?v=6")`);
-      MENU_FINGERS.style.setProperty('--finger3', `url("assets/${animal}_menu_finger3.png?v=6")`);
+      const fingers = MENU_FINGERS.querySelectorAll('.menu-finger');
+      fingers.forEach((el, i) => {
+        el.src = `assets/${animal}_menu_finger${i+1}.png?v=9`;
+      });
+      // 強制重新啟動同一時間點的動畫，讓每次進入攻略頁都三個一起縮放。
+      MENU_FINGERS.classList.remove('show');
+      void MENU_FINGERS.offsetWidth;
+      MENU_FINGERS.classList.add('show');
     }
-    prepareMusic(page.music);
     STAGE.classList.toggle('home-motion',id==='home');
     STAGE.classList.remove('page-enter');
     void STAGE.offsetWidth;
